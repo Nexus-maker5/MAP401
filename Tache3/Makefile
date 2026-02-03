@@ -5,7 +5,7 @@
 # utilisation des variables internes $@ $< $^ $*
 # $@ : correspond au nom de la cible
 # $< : correspond au nom de la premiere dependance
-# $^ : correspond � toutes les d�pendances
+# $^ : correspond à toutes les dépendances
 # $* : correspond au nom du fichier sans extension 
 #       (dans les regles generiques uniquement)
 #############################################################################
@@ -23,11 +23,10 @@ CC = clang
 
 # chemin d'acces aux librairies (interfaces)
 INCDIR = .
-
 # chemin d'acces aux librairies (binaires)
 LIBDIR = .
 
-# options pour l'�dition des liens
+# options pour l'édition des liens
 LDOPTS = -L$(LIBDIR) -lm
 
 # options pour la recherche des fichiers .o et .h
@@ -45,14 +44,11 @@ EXECUTABLES = main
 #############################################################################
 
 ########################################################
-# la r�gle par d�faut
+# la règle par défaut
 all : $(EXECUTABLES)
 
 ########################################################
 # regle generique : 
-#  remplace les regles de compilation separee de la forme
-#	module.o : module.c module.h
-#		$(CC) -c $(COMPILOPTS) module.c
 %.o : %.c %.h
 	@echo ""
 	@echo "---------------------------------------------"
@@ -63,20 +59,23 @@ all : $(EXECUTABLES)
 ########################################################
 # regles explicites de compilation separee de modules
 # n'ayant pas de fichier .h ET/OU dependant d'autres modules
-image.o : image.c image.h 
+
+image.o : image.c image.h
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Compilation du module image"
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
-geom2d.o : geom2d.c geom2d.h 
+# Ajout des dépendances vers liste.h et geom2d.h car inclus dans contour.c
+contour.o : contour.c contour.h image.h liste.h geom2d.h
 	@echo ""
 	@echo "---------------------------------------------"
-	@echo "Compilation du module geom2d"
+	@echo "Compilation du module contour"
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
+# Nouveau module nécessaire pour la Tâche 3
 liste.o : liste.c liste.h geom2d.h
 	@echo ""
 	@echo "---------------------------------------------"
@@ -84,10 +83,11 @@ liste.o : liste.c liste.h geom2d.h
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
-contour.o : contour.c contour.h liste.h geom2d.h image.h
+# Nouveau module nécessaire pour les calculs de points
+geom2d.o : geom2d.c geom2d.h
 	@echo ""
 	@echo "---------------------------------------------"
-	@echo "Compilation du module contour"
+	@echo "Compilation du module geom2d"
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
@@ -102,7 +102,8 @@ main.o : main.c image.h contour.h
 ########################################################
 # regles explicites de creation des executables
 
-main : main.o image.o contour.o
+# L'exécutable doit lier TOUS les objets utilisés
+main : main.o image.o contour.o liste.o geom2d.o
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Creation de l'executable "$@
@@ -110,6 +111,6 @@ main : main.o image.o contour.o
 	$(CC) $^ $(LDOPTS) -o $@
 
 
-# regle pour "nettoyer" le r�pertoire
+# regle pour "nettoyer" le répertoire
 clean:
-	rm -fR $(EXECUTABLES) *.o 
+	rm -fR $(EXECUTABLES) *.o

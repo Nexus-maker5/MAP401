@@ -124,7 +124,6 @@ void calculer_contour(Image I){
     R.x=x0;
     R.y=y0;
     R.o=Est;
-    printf("{");
     while (cond==1){
         memoriser_position(&C,&R);
         avancer(&R);
@@ -134,5 +133,5 @@ void calculer_contour(Image I){
         }
     }
     memoriser_position(&C,&R);
-    printf("Nombre de segment : %d",C.taille);
+    printf("Nombre de segment : %d\n",C.taille-1);
 }
