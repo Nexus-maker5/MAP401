@@ -1,4 +1,6 @@
 #include "contour.h"
+#include "liste.h"
+#include"geom2d.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -105,13 +107,15 @@ void nouvelle_orientation(Image I,robot *R){
     else if(pD==BLANC) tourner_a_droite(R);
 }
 // Memoriser la position du robot
-void memoriser_position(robot *R){
-    printf("(%.1f,%.1f)",R->x,R->y);
+void memoriser_position(Contour *C,robot *R){
+    *C = ajouter_element_liste_Point(*C, set_point(R->x,R->y));
 }
 
 // Calculer le contour de l'image
 void calculer_contour(Image I){
     robot R;
+    Contour C;
+    C=creer_liste_Point_vide();
     double x0,y0;
     int cond=1;
     Point pixel=trouver_pixel_depart(I);
@@ -122,14 +126,13 @@ void calculer_contour(Image I){
     R.o=Est;
     printf("{");
     while (cond==1){
-        memoriser_position(&R);
-        printf(",");
+        memoriser_position(&C,&R);
         avancer(&R);
         nouvelle_orientation(I,&R);
         if(R.x==x0 && R.y==y0 && R.o==Est){
             cond=0;
         }
     }
-    memoriser_position(&R);
-    printf("}\n");
+    memoriser_position(&C,&R);
+    printf("Nombre de segment : %d",C.taille);
 }
