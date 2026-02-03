@@ -102,7 +102,7 @@ void entete_fichier_pbm(FILE *f)
 {
 	char *ligne;
 	size_t n;
-	ssize_t l_ligne;
+	size_t l_ligne;
 
 	/* se positionner en debut de fichier */
 	fseek(f, 0, SEEK_SET);
@@ -202,13 +202,13 @@ Image lire_fichier_image(char *nom_f)
 	while (!feof(f) && y<=H)
 	{
 		char c;
-		int res;
+		//int res;
 		
 		/* lire un caractere en passant les caracteres differents de '0' et '1' */
-		res = fscanf(f, "%c", &c);
+		/*res = */fscanf(f, "%c", &c);
 		while (!feof(f) && !(c == '0' || c == '1'))
 		{
-			res = fscanf(f, "%c", &c);
+			/*res = */fscanf(f, "%c", &c);
 		}
 		if (!feof(f))
 		{
@@ -230,26 +230,23 @@ Image lire_fichier_image(char *nom_f)
 /* ecrire l'image I � l'ecran */
 void ecrire_image(Image I)
 {
-	UINT i, j,L,H;
-	Pixel x;
-
-	L=largeur_image(I);
-	H=hauteur_image(I);
-	for(j=1; j<=H; j++){
-		for(i=1; i<=L; i++){
-			x=get_pixel_image(I,i,j);
-			switch(x){
-				case 0: 
-					printf(" ");;
-					break;
-				case 1:
-					printf("⏹︎");;
-					break;
+	UINT L=largeur_image(I);
+	UINT H=hauteur_image(I);
+	printf("Image de dimensions %d %d\n",L ,H );
+	for (int j=1; j<H+1;j++){
+		for (int i=1;i<L+1;i++){
+			Pixel p=get_pixel_image(I,i,j);
+			{
+				if (p==NOIR)
+					printf("\x1b[40m  \x1b[0m"); /* fond noir */
+				else
+					printf("\x1b[47m  \x1b[0m"); /* fond blanc */
 			}
+
 		}
-    	printf("\n");
+		printf("\n");
 	}
-	printf("\n");
+	
 }
 
 /* creer et calculer l'image "negatif" de l'image I */
@@ -257,23 +254,21 @@ void ecrire_image(Image I)
 /* la fonction renvoie l'image "negatif" de I */
 Image negatif_image(Image I)
 {
-	UINT i,j,L,H;
-	L=largeur_image(I);
-	H=hauteur_image(I);
-	Pixel x,v;
-	Image Ineg=creer_image(L,H);
-	for(j=1; j<=H; j++){
-		for(i=1; i<=L; i++){
-			x=get_pixel_image(I,i,j);
-			switch(x){
-				case 0: 
-					set_pixel_image(Ineg,i,j,1);
-					break;
-				case 1:
-					set_pixel_image(Ineg,i,j,0);
-					break;
+	UINT L=largeur_image(I);
+	UINT H=hauteur_image(I);
+	Image I_neg= creer_image(L,H);
+	for (int j=1; j<H+1;j++){
+		for (int i=1;i<L+1;i++){
+			Pixel p=get_pixel_image(I,i,j);
+			if (p==NOIR){
+				set_pixel_image(I_neg,i,j,BLANC);
+			}
+			else{
+				set_pixel_image(I_neg,i,j,NOIR);
 			}
 		}
-	}
-	return Ineg;
+	}	 
+  return I_neg;
+	
+	
 }
