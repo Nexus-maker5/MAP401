@@ -1,6 +1,6 @@
 #include "contour.h"
-#include "liste.h"
 #include"geom2d.h"
+#include "liste.h"
 #include <stdio.h>
 #include <stdlib.h>
 

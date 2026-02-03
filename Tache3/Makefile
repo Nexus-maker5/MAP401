@@ -70,7 +70,21 @@ image.o : image.c image.h
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
-contour.o : contour.c contour.h 
+geom2d.o : geom2d.c geom2d.h 
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module geom2d"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<
+
+liste.o : liste.c liste.h geom2d.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module liste"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<
+
+contour.o : contour.c contour.h liste.h geom2d.h image.h
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Compilation du module contour"

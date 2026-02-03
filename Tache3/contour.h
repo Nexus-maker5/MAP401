@@ -1,9 +1,10 @@
 #ifndef _CONTOUR_H_
 #define _CONTOUR_H_
 #include "image.h"
-#include <stdio.h>
 #include"geom2d.h"
 #include "liste.h"
+#include <stdio.h>
+
 
 
 
