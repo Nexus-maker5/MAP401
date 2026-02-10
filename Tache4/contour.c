@@ -143,10 +143,10 @@ void sauvegarder_contour_eps(Contour C, char *filename, int largeur, int hauteur
         fprintf(stderr, "Erreur : impossible d'ouvrir le fichier %s pour écriture.\n", filename);
         exit(1);
     }
+    
     fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", largeur, hauteur);
     
-    // 3. Configuration du trait
     fprintf(f, "0 setlinewidth\n");
 
     Cellule_Liste_Point *courant = C.first;
@@ -162,7 +162,17 @@ void sauvegarder_contour_eps(Contour C, char *filename, int largeur, int hauteur
         }
         courant = courant->suiv;
     }
-    fprintf(f, "stroke\n");   // Dessiner le chemin
+    if(C.first->data.x == C.last->data.x && C.first->data.y == C.last->data.y) {
+        printf("Choissir le type de remplissage : 1 pour remplir, 0 pour contour seulement : ");
+        int choix;
+        scanf("%d", &choix);
+        if(choix == 1) {
+            fprintf(f, "fill\n");
+        }
+        else {
+            fprintf(f, "stroke\n");
+        }
+    }
     fprintf(f, "showpage\n"); // Afficher la page
     fclose(f);
     printf("Fichier %s généré avec succès.\n", filename);
