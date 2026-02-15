@@ -172,8 +172,10 @@ void sauvegarder_contour_eps(Contour C, char *filename, int largeur, int hauteur
         else {
             fprintf(f, "stroke\n");
         }
+    }else {
+        fprintf(f, "stroke\n");
     }
-    fprintf(f, "showpage\n"); // Afficher la page
+    fprintf(f, "showpage\n");
     fclose(f);
     printf("Fichier %s généré avec succès.\n", filename);
 }
