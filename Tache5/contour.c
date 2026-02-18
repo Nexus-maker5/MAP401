@@ -4,44 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Trouver le pixel de depart (le premier pixel noir ayant un pixel blanc au dessus)
-Point trouver_pixel_depart(Image I){
-    UINT i, j,L,H;
-	Pixel P1;
-	L=largeur_image(I);
-	H=hauteur_image(I);
-	for(j=1; j<=H; j++){
-		for(i=1; i<=L; i++){
-			P1=get_pixel_image(I,i,j);
-			if(P1==1){
-                Point pixel={i,j};
-                return pixel;
-            } 
-		}
-	}
-    return set_point(-1,-1);
-}
-
-//Creer une image-masque
-Image creer_image_masque(Image I){
-    UINT L=largeur_image(I);
-    UINT H=hauteur_image(I);
-    Image I_masque= creer_image(L,H);
-    for (int j=1; j<H+1;j++){
-        for (int i=1;i<L+1;i++){
-            Pixel P1=get_pixel_image(I,i,j);
-            Pixel P2=get_pixel_image(I,i,j-1);
-            if (P1==NOIR && P2==BLANC){
-                set_pixel_image(I_masque,i,j,NOIR);
-            }
-            else{
-                set_pixel_image(I_masque,i,j,BLANC);
-            }
-        }
-    }
-    return I_masque;
-}
-
 // Avancer le robot d'une case 
 void avancer(robot *R){
     switch(R->o){
@@ -126,6 +88,46 @@ void nouvelle_orientation(Image I,robot *R){
     else if(pD==BLANC) tourner_a_droite(R);
 }
 
+
+// Trouver le pixel de depart (le premier pixel noir ayant un pixel blanc au dessus)
+Point trouver_pixel_depart(Image I){
+    UINT i, j,L,H;
+	Pixel P1;
+	L=largeur_image(I);
+	H=hauteur_image(I);
+	for(j=1; j<=H; j++){
+		for(i=1; i<=L; i++){
+			P1=get_pixel_image(I,i,j);
+			if(P1==1){
+                Point pixel={i,j};
+                return pixel;
+            } 
+		}
+	}
+    return set_point(-1,-1);
+}
+
+//Creer une image-masque
+Image creer_image_masque(Image I){
+    UINT L=largeur_image(I);
+    UINT H=hauteur_image(I);
+    Image I_masque= creer_image(L,H);
+    for (int j=1; j<H+1;j++){
+        for (int i=1;i<L+1;i++){
+            Pixel P1=get_pixel_image(I,i,j);
+            Pixel P2=get_pixel_image(I,i,j-1);
+            if (P1==NOIR && P2==BLANC){
+                set_pixel_image(I_masque,i,j,NOIR);
+            }
+            else{
+                set_pixel_image(I_masque,i,j,BLANC);
+            }
+        }
+    }
+    return I_masque;
+}
+
+
 // Memoriser la position du robot
 void memoriser_position(Contour *C,robot *R){
     *C = ajouter_element_liste_Point(*C, set_point(R->x,R->y));
@@ -158,75 +160,113 @@ Contour calculer_contour(Image I,Image *I_masque, Point pixel){
     return C;
 }
 
-//Afficher le contour de l'image
-void afficher_contour(Contour C){
-    Cellule_Liste_Point *courant = C.first;
-    printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
-    courant = courant->suiv;
-    while (courant != NULL) {
-        Point p = courant->data;
-        printf("(%.1f, %.1f)", p.x, p.y);
-        courant = courant->suiv;
-    }
-    printf("\n");
-    printf("Nombre de points : %d\n",C.taille);
-    printf("Nombre de segments : %d\n",C.taille-1);
-}
+// --- Gestion du Tableau de Contours ---
 
-
-void contour_final(Image I_masque){
-    Point pixel=trouver_pixel_depart(I_masque);
-    int i=0;
-    while (pixel.x >= 0 && pixel.y >= 0) {
-        printf("Contour %d : ", i+1);
-        Contour C = calculer_contour(I,&I_masque, pixel); 
-        afficher_contour(C);
-        pixel=trouver_pixel_depart(I_masque);
-        i++;
-    }
-}
-
-// Sauvegarder le contour dans un fichier EPS
-void sauvegarder_contour_eps(Contour C, char *filename, int largeur, int hauteur) {
-    FILE *f = fopen(filename, "w");
-    if (f == NULL) {
-        fprintf(stderr, "Erreur : impossible d'ouvrir le fichier %s pour écriture.\n", filename);
+Tableau_Contours creer_tableau_contours_vide() {
+    Tableau_Contours T;
+    T.taille = 0;
+    T.capacite = 50; // Capacité initiale arbitraire
+    T.tab = malloc(T.capacite * sizeof(Contour));
+    if (T.tab == NULL) {
+        fprintf(stderr, "Erreur d'allocation initiale du tableau\n");
         exit(1);
     }
-    
-    fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
-    fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", largeur, hauteur);
-    
-    fprintf(f, "0 setlinewidth\n");
-
-    Cellule_Liste_Point *courant = C.first;
-    int premier_point = 1;
-    while (courant != NULL) {
-        Point p = courant->data;
-
-        if (premier_point) {
-            fprintf(f, "%.2f %.2f moveto\n", p.x, (double)hauteur - p.y); 
-            premier_point = 0;
-        } else {
-            fprintf(f, "%.2f %.2f lineto\n", p.x, (double)hauteur - p.y);
-        }
-        courant = courant->suiv;
-    }
-    if(C.first->data.x == C.last->data.x && C.first->data.y == C.last->data.y) {
-        printf("Choissir le type de remplissage : 1 pour remplir, 0 pour contour seulement : ");
-        int choix;
-        scanf("%d", &choix);
-        if(choix == 1) {
-            fprintf(f, "fill\n");
-        }
-        else {
-            fprintf(f, "stroke\n");
-        }
-    }else {
-        fprintf(f, "stroke\n");
-    }
-    fprintf(f, "showpage\n");
-    fclose(f);
-    printf("Fichier %s généré avec succès.\n", filename);
+    return T;
 }
 
+void ajouter_contour(Tableau_Contours *T, Contour C) {
+    if (T->taille >= T->capacite) {
+        T->capacite *= 2;
+        T->tab = realloc(T->tab, T->capacite * sizeof(Contour));
+        if (T->tab == NULL) {
+            fprintf(stderr, "Erreur de réallocation mémoire\n");
+            exit(1);
+        }
+    }
+    T->tab[T->taille] = C;
+    T->taille++;
+}
+
+void liberer_tableau_contours(Tableau_Contours *T) {
+    free(T->tab);
+    T->tab = NULL;
+    T->taille = 0;
+    T->capacite = 0;
+}
+
+// --- Fonctions Principales utilisant le Tableau ---
+
+Tableau_Contours recuperer_contours(Image I) {
+    Tableau_Contours T = creer_tableau_contours_vide();
+    Image I_masque = creer_image_masque(I);
+    while (1) {
+        Point depart = trouver_pixel_depart(I_masque);
+        if (depart.x == -1 && depart.y == -1) break;
+        Contour C = calculer_contour(I, &I_masque, depart);
+        ajouter_contour(&T, C);
+    }
+    return T;
+}
+
+void afficher_stats_contours(Tableau_Contours T) {
+    int total_segments = 0;
+    // Parcours simple avec une boucle for
+    for (unsigned int i = 0; i < T.taille; i++) {
+        Contour C = T.tab[i];
+        if (C.taille > 0)
+            total_segments += (C.taille - 1);
+    }
+    printf("Nombre de contours : %d\n", T.taille);
+    printf("Nombre total de segments : %d\n", total_segments);
+}
+
+void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, int hauteur) {
+    FILE *f = fopen(filename, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Erreur ouverture fichier %s\n", filename);
+        exit(1);
+    }
+
+    fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
+    fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", largeur, hauteur);
+    fprintf(f, "0 setlinewidth\n");
+
+    // 1. On commence un chemin unique qui va contenir TOUS les contours
+    fprintf(f, "newpath\n");
+
+    for (unsigned int i = 0; i < T.taille; i++) {
+        Contour C = T.tab[i];
+        if (C.first != NULL) {
+            Cellule_Liste_Point *pt = C.first;
+            fprintf(f, "%.2f %.2f moveto\n", pt->data.x, (double)hauteur - pt->data.y);
+            pt = pt->suiv;
+            while (pt != NULL) {
+                fprintf(f, "%.2f %.2f lineto\n", pt->data.x, (double)hauteur - pt->data.y);
+                pt = pt->suiv;
+            }
+            fprintf(f, "closepath\n");
+        }
+    }
+    fprintf(f, "eofill\n");
+    fprintf(f, "showpage\n");
+    fclose(f);
+    printf("Fichier EPS généré : %s\n", filename);
+}
+
+void afficher_contours(Tableau_Contours T) {
+    for (unsigned int i = 0; i < T.taille; i++) {
+        Contour C = T.tab[i];
+        Cellule_Liste_Point *courant = C.first;
+        printf("Contour %d: ", i + 1);
+        printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
+        courant = courant->suiv;
+        while (courant != NULL) {
+            Point p = courant->data;
+            printf("(%.1f, %.1f)", p.x, p.y);
+            courant = courant->suiv;
+        }
+        printf("\n");
+        printf("Nombre de points : %d\n",C.taille);
+        printf("Nombre de segments : %d\n",C.taille-1);
+    }
+}

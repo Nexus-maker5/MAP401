@@ -9,6 +9,7 @@
 /* DEFINITIONS DE TYPES                    */
 /*================================================================*/
 
+#define taillle_max 1000
 
 /*---- Type Cellule de liste de point ----*/
 typedef struct Cellule_Liste_Point_
@@ -34,6 +35,14 @@ typedef struct Tableau_Point_
     unsigned int taille; /* nombre d'elements dans le tableau */
     Point *tab;          /* (pointeur vers) le tableau des elements */
 } Tableau_Point;
+
+
+/*---- Type Tableau de contour ----*/
+typedef struct Seq_Contour_
+{
+    unsigned int taille;            /* nombre d'elements dans la liste */
+    Contour *C; 
+} Seq_Contour;
 
 
 /*================================================================*/

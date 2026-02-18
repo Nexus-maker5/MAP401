@@ -3,24 +3,34 @@
 #include <string.h>
 #include "image.h"
 #include "contour.h"
+
 int main(int argc, char **argv){
     if (argc < 2) {
-        printf("Usage: %s <fichier_image> \n",argv[0]);
+        printf("Usage: %s <fichier_image.pbm>\n", argv[0]);
         return 1;
     }
-    Image A=lire_fichier_image(argv[1]);
-    Image A_masque = creer_image_masque(A);
+
+    Image A = lire_fichier_image(argv[1]);
     int L = largeur_image(A);
     int H = hauteur_image(A);
-    char nom_sortie[512];
 
+    Tableau_Contours tab_contours = recuperer_contours(A);
+
+    printf("Image: %s\n", argv[1]);
+    afficher_stats_contours(tab_contours);
+
+    afficher_contours(tab_contours);
+
+    char nom_sortie[512];
     strcpy(nom_sortie, argv[1]);
     char *point = strrchr(nom_sortie, '.'); 
     if (point != NULL) {
         *point = '\0';
     }
     strcat(nom_sortie, ".eps");
-    ecrire_image(A);
-    contour_final(A);
+    sauvegarder_contours_eps(tab_contours, nom_sortie, L, H);
+    
+    liberer_tableau_contours(&tab_contours);
+
     return 0;
 }
