@@ -230,10 +230,8 @@ void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, i
     fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", largeur, hauteur);
     fprintf(f, "0 setlinewidth\n");
-
-    // 1. On commence un chemin unique qui va contenir TOUS les contours
     fprintf(f, "newpath\n");
-
+    
     for (unsigned int i = 0; i < T.taille; i++) {
         Contour C = T.tab[i];
         if (C.first != NULL) {
