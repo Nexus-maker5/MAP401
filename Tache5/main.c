@@ -9,6 +9,7 @@ int main(int argc, char **argv){
         return 1;
     }
     Image A=lire_fichier_image(argv[1]);
+    Image A_masque = creer_image_masque(A);
     int L = largeur_image(A);
     int H = hauteur_image(A);
     char nom_sortie[512];
@@ -19,6 +20,7 @@ int main(int argc, char **argv){
         *point = '\0';
     }
     strcat(nom_sortie, ".eps");
+    ecrire_image(A);
     contour_final(A);
     return 0;
 }

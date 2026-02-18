@@ -28,7 +28,7 @@ void memoriser_position(Contour *C,robot *R);
 
 void nouvelle_orientation(Image I,robot *R);
 
-void contour_final(Image I);
+void contour_final(Image I_masque);
 
 Image creer_image_masque(Image I);
 

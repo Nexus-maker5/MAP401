@@ -29,8 +29,9 @@ Image creer_image_masque(Image I){
     Image I_masque= creer_image(L,H);
     for (int j=1; j<H+1;j++){
         for (int i=1;i<L+1;i++){
-            Pixel p=get_pixel_image(I,i,j);
-            if (p==NOIR){
+            Pixel P1=get_pixel_image(I,i,j);
+            Pixel P2=get_pixel_image(I,i,j-1);
+            if (P1==NOIR && P2==BLANC){
                 set_pixel_image(I_masque,i,j,NOIR);
             }
             else{
@@ -147,7 +148,7 @@ Contour calculer_contour(Image I,Image *I_masque, Point pixel){
         avancer(&R);
         nouvelle_orientation(I,&R);
         if(R.o==Est){
-            set_pixel_image(*I_masque,R.x,R.y,BLANC);
+            set_pixel_image(*I_masque,R.x+1,R.y+1,BLANC);
         }
         if(R.x==x0 && R.y==y0 && R.o==Est){
             cond=0;
@@ -172,12 +173,11 @@ void afficher_contour(Contour C){
     printf("Nombre de segments : %d\n",C.taille-1);
 }
 
-void contour_final(Image I){
-    Image I_masque = creer_image_masque(I);
+
+void contour_final(Image I_masque){
     Point pixel=trouver_pixel_depart(I_masque);
     int i=0;
-    printf("Nombre de contours : %d\n", i);
-    while (pixel.x != -1 && pixel.y != -1) {
+    while (pixel.x >= 0 && pixel.y >= 0) {
         printf("Contour %d : ", i+1);
         Contour C = calculer_contour(I,&I_masque, pixel); 
         afficher_contour(C);
