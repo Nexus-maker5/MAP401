@@ -245,7 +245,7 @@ void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, i
             fprintf(f, "closepath\n");
         }
     }
-    fprintf(f, "eofill\n");
+    fprintf(f, "fill\n");
     fprintf(f, "showpage\n");
     fclose(f);
     printf("Fichier EPS généré : %s\n", filename);
