@@ -14,12 +14,12 @@ int main(int argc, char **argv){
     int L = largeur_image(A);
     int H = hauteur_image(A);
 
-    Tableau_Contours tab_contours = recuperer_contours(A);
+    Tableau_Contours tab = recuperer_contours(A);
 
     printf("Image: %s\n", argv[1]);
-    afficher_stats_contours(tab_contours);
+    afficher_stats_contours(tab);
 
-    afficher_contours(tab_contours);
+    afficher_contours(tab);
 
     char nom_sortie[512];
     strcpy(nom_sortie, argv[1]);
@@ -28,9 +28,9 @@ int main(int argc, char **argv){
         *point = '\0';
     }
     strcat(nom_sortie, ".eps");
-    sauvegarder_contours_eps(tab_contours, nom_sortie, L, H);
+    sauvegarder_contours_eps(tab, nom_sortie, L, H);
     
-    liberer_tableau_contours(&tab_contours);
+    liberer_tableau_contours(&tab);
 
     return 0;
 }
