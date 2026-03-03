@@ -264,7 +264,5 @@ void afficher_contours(Tableau_Contours T) {
             courant = courant->suiv;
         }
         printf("\n");
-        printf("Nombre de points : %d\n",C.taille);
-        printf("Nombre de segments : %d\n",C.taille-1);
     }
 }

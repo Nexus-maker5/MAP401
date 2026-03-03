@@ -16,8 +16,8 @@ typedef struct {
 
 /*---- Type Tableau de contour ----*/
 typedef struct {
-    unsigned int taille;     // Nombre actuel de contours stockés
-    unsigned int capacite;   // Capacité totale du tableau avant redimensionnement
+    unsigned int taille;     // Nombre actuel de contours stockÃ©s
+    unsigned int capacite;   // CapacitÃ© totale du tableau avant redimensionnement
     Contour *tab;            // Pointeur vers le tableau de Contours
 } Tableau_Contours;
 

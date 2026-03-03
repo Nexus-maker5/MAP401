@@ -17,9 +17,9 @@ int main(int argc, char **argv){
     Tableau_Contours tab = recuperer_contours(A);
 
     printf("Image: %s\n", argv[1]);
-    afficher_stats_contours(tab);
+    //afficher_stats_contours(tab);
 
-    afficher_contours(tab);
+    //afficher_contours(tab);
 
     char nom_sortie[512];
     strcpy(nom_sortie, argv[1]);
