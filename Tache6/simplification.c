@@ -131,7 +131,21 @@ Tableau_Segment sequence_segments_liste_vers_tableau(Liste_Segment L)
 	return T;
 }
 
-// fonction de simplification 
+/*convertir une liste de segments en contour*/
+Contour liste_segment_vers_contour(Liste_Segment L){
+	Contour C=creer_liste_Point_vide();
+	Cellule_Liste_Segment *el=L.first;
+	while (el) 
+	{
+		C=ajouter_element_liste_Point(C, el->data.A);
+		C=ajouter_element_liste_Point(C, el->data.B);
+		el = el->suiv; /* passer a l'element suivant dans la liste chainee */
+	}
+	return C;
+}
+
+
+/*Simplification de Douglas-Peucker pour une séquence de points*/
 Liste_Segment simplification_douglas_peucker(Tableau_Point CONT ,int j1 , int j2, double d  ){
     Liste_Segment  L= creer_liste_Segment_vide();
 
@@ -156,18 +170,7 @@ Liste_Segment simplification_douglas_peucker(Tableau_Point CONT ,int j1 , int j2
     return L;  
 }
 
-Contour liste_segment_vers_contour(Liste_Segment L){
-	Contour C=creer_liste_Point_vide();
-	Cellule_Liste_Segment *el=L.first;
-	while (el) 
-	{
-		C=ajouter_element_liste_Point(C, el->data.A);
-		C=ajouter_element_liste_Point(C, el->data.B);
-		el = el->suiv; /* passer a l'element suivant dans la liste chainee */
-	}
-	return C;
-}
-
+/*Simplication de Douglas-Peucker pour un tableau de contours*/
 Tableau_Contours simplification_final(Tableau_Contours C, double d)
 {
     Tableau_Contours seq=creer_tableau_contours_vide();

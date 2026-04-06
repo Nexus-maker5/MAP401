@@ -64,6 +64,7 @@ Tableau_Segment sequence_segments_liste_vers_tableau(Liste_Segment L);
 //fonction de simplification de contour
 Liste_Segment simplification_douglas_peucker(Tableau_Point CONT ,int j1 , int j2, double d  );
 
+/*convertir une liste de segments en contour*/
 Contour liste_segment_vers_contour(Liste_Segment L);
 
 //Sequence de contour sous forme de liste de segment

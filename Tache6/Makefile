@@ -36,7 +36,7 @@ INCLUDEOPTS = -I$(INCDIR)
 COMPILOPTS = -g -Wall $(INCLUDEOPTS)
 
 # liste des executables
-EXECUTABLES = main test_geom2d test_simplification
+EXECUTABLES = test_geom2d test_simplification
 
 
 #############################################################################
@@ -113,14 +113,6 @@ test_simplification.o : test_simplification.c simplification.h geom2d.h contour.
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
-main.o : main.c image.h contour.h
-	@echo ""
-	@echo "---------------------------------------------"
-	@echo "Compilation du module main"
-	@echo "---------------------------------------------"
-	$(CC) -c $(COMPILOPTS) $<
-
-
 
 ########################################################
 # regles explicites de creation des executables
@@ -134,13 +126,6 @@ test_geom2d : test_geom2d.o geom2d.o
 	$(CC) $^ $(LDOPTS) -o $@
 
 test_simplification : test_simplification.o simplification.o geom2d.o contour.o liste.o image.o
-	@echo ""
-	@echo "---------------------------------------------"
-	@echo "Creation de l'executable "$@
-	@echo "---------------------------------------------"
-	$(CC) $^ $(LDOPTS) -o $@
-
-main : main.o image.o contour.o liste.o geom2d.o
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Creation de l'executable "$@
