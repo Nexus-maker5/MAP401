@@ -20,4 +20,7 @@ int main(int argc, char **argv){
     printf("Negation:\n");
     ecrire_image(Aneg);
 
+    /*Nettoyage*/
+    supprimer_image(&A);
+    supprimer_image(&Aneg);
 }
