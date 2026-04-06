@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Trouver le pixel de depart (le premier pixel noir ayant un pixel blanc au dessus)
+/*Trouver le pixel de depart (le premier pixel noir ayant un pixel blanc au dessus)*/
 Point trouver_pixel_depart(Image I){
     UINT i, j,L,H;
 	Pixel P1,P2;
@@ -24,7 +24,7 @@ Point trouver_pixel_depart(Image I){
     exit(1);
 }
 
-// Avancer le robot d'une case 
+/*Avancer le robot d'une case */
 void avancer(robot *R){
     switch(R->o){
         case Nord:
@@ -40,7 +40,7 @@ void avancer(robot *R){
             R->x = R->x - 1;
             break;
         }
-    }
+}
 
 /* faire tourner le robot à gauche */
 void tourner_a_gauche(robot *R) {
@@ -77,7 +77,8 @@ void tourner_a_droite(robot *R) {
     break;
   }
 }
-// Mettre a jour l'orientation du robot 
+
+/* Mettre a jour l'orientation du robot */
 void nouvelle_orientation(Image I,robot *R){
     Pixel pD;
     Pixel pG;
@@ -106,12 +107,13 @@ void nouvelle_orientation(Image I,robot *R){
     if(pG==NOIR) tourner_a_gauche(R);
     else if(pD==BLANC) tourner_a_droite(R);
 }
-// Memoriser la position du robot
+
+/* Memoriser la position du robot */
 void memoriser_position(Contour *C,robot *R){
     *C = ajouter_element_liste_Point(*C, set_point(R->x,R->y));
 }
 
-// Calculer le contour de l'image
+/* Calculer le contour de l'image */
 Contour calculer_contour(Image I){
     robot R;
     Contour C;
