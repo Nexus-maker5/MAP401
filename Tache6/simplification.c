@@ -135,10 +135,11 @@ Tableau_Segment sequence_segments_liste_vers_tableau(Liste_Segment L)
 Contour liste_segment_vers_contour(Liste_Segment L){
 	Contour C=creer_liste_Point_vide();
 	Cellule_Liste_Segment *el=L.first;
-	while (el) 
-	{
+	while (el) {
 		C=ajouter_element_liste_Point(C, el->data.A);
-		C=ajouter_element_liste_Point(C, el->data.B);
+		if(el->suiv==NULL){ /* si c'est le dernier segment de la liste, on ajoute aussi le point B du segment */
+			C=ajouter_element_liste_Point(C, el->data.B);
+		}
 		el = el->suiv; /* passer a l'element suivant dans la liste chainee */
 	}
 	return C;

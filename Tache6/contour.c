@@ -209,6 +209,7 @@ Tableau_Contours recuperer_contours(Image I) {
         ajouter_contour(&T, C);
     }
     supprimer_image(&I_masque);
+    compacter_tableau_contours(&T);
     return T;
 }
 
@@ -222,6 +223,14 @@ void afficher_stats_contours(Tableau_Contours T) {
     }
     printf("Nombre de contours : %d\n", T.taille);
     printf("Nombre total de segments : %d\n", total_segments);
+}
+
+void compacter_tableau_contours(Tableau_Contours *T) {
+    if (T->taille == 0 || T->taille == T->capacite) return;
+    Contour *nouveau = realloc(T->tab, T->taille * sizeof(Contour));
+    if (nouveau == NULL) return; // échec non fatal, on garde l'ancien bloc
+    T->tab = nouveau;
+    T->capacite = T->taille;    // capacite == taille, info cohérente
 }
 
 void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, int hauteur) {

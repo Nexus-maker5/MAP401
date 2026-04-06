@@ -33,6 +33,9 @@ Tableau_Contours recuperer_contours(Image I);
 /*Afficher les statistiques des contours*/
 void afficher_stats_contours(Tableau_Contours T);
 
+/*Compacter le tableau de contours*/
+void compacter_tableau_contours(Tableau_Contours *T);
+
 /*creer un fichier eps pour chaque contour*/
 void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, int hauteur);
 
