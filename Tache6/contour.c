@@ -188,6 +188,9 @@ void ajouter_contour(Tableau_Contours *T, Contour C) {
 }
 
 void liberer_tableau_contours(Tableau_Contours *T) {
+    for (unsigned int i = 0; i < T->taille; i++) {
+        supprimer_liste_Point(T->tab[i]);
+    }
     free(T->tab);
     T->tab = NULL;
     T->taille = 0;
@@ -205,6 +208,7 @@ Tableau_Contours recuperer_contours(Image I) {
         Contour C = calculer_contour(I, &I_masque, depart);
         ajouter_contour(&T, C);
     }
+    supprimer_image(&I_masque);
     return T;
 }
 

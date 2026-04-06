@@ -36,7 +36,7 @@ INCLUDEOPTS = -I$(INCDIR)
 COMPILOPTS = -g -Wall $(INCLUDEOPTS)
 
 # liste des executables
-EXECUTABLES = main test_geom2d
+EXECUTABLES = main test_geom2d test_simplification
 
 
 #############################################################################
@@ -98,6 +98,20 @@ test_geom2d.o : test_geom2d.c geom2d.h
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
+# simplification des contours
+simplification.o : simplification.c simplification.h geom2d.h contour.h liste.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module simplification"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<
+
+test_simplification.o : test_simplification.c simplification.h geom2d.h contour.h liste.h image.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module test_simplification"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<
 
 main.o : main.c image.h contour.h
 	@echo ""
@@ -119,6 +133,12 @@ test_geom2d : test_geom2d.o geom2d.o
 	@echo "---------------------------------------------"
 	$(CC) $^ $(LDOPTS) -o $@
 
+test_simplification : test_simplification.o simplification.o geom2d.o contour.o liste.o image.o
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Creation de l'executable "$@
+	@echo "---------------------------------------------"
+	$(CC) $^ $(LDOPTS) -o $@
 
 main : main.o image.o contour.o liste.o geom2d.o
 	@echo ""

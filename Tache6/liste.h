@@ -36,13 +36,6 @@ typedef struct Tableau_Point_
     Point *tab;          /* (pointeur vers) le tableau des elements */
 } Tableau_Point;
 
-/*---- Type Tableau de segemnt ----*/
-typedef struct Tableau_Segment_
-{
-    unsigned int taille; /* nombre d'elements dans le tableau */
-    Segment *tab;          /* (pointeur vers) le tableau des elements */
-} Tableau_segemnt;
-
 
 /*---- Type Tableau de contour ----*/
 typedef struct Seq_Contour_

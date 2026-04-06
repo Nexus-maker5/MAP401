@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "geom2d.h"
 #include "image.h"
+#include "simplification.h"
 #include "contour.h"
 
+
 int main(int argc, char **argv){
+
     if (argc < 2) {
         printf("Usage: %s <fichier_image.pbm>\n", argv[0]);
         return 1;
@@ -17,21 +20,9 @@ int main(int argc, char **argv){
     Tableau_Contours tab = recuperer_contours(A);
 
     printf("Image: %s\n", argv[1]);
-    //afficher_stats_contours(tab);
+    Tableau_Contours COUNT1= simplification_final(tab, 1);
+    sauvegarder_contours_eps(COUNT1, "contours_simplifies_eps_1.0.eps", L, H);
+    Tableau_Contours COUNT2= simplification_final(tab, 2);
+    sauvegarder_contours_eps(COUNT2, "contours_simplifies_eps_2.0.eps", L, H);
 
-    //afficher_contours(tab);
-
-    char nom_sortie[512];
-    strcpy(nom_sortie, argv[1]);
-    char *point = strrchr(nom_sortie, '.'); 
-    if (point != NULL) {
-        *point = '\0';
-    }
-    strcat(nom_sortie, ".eps");
-    sauvegarder_contours_eps(tab, nom_sortie, L, H);
-    
-    liberer_tableau_contours(&tab);
-    supprimer_image(&A);
-
-    return 0;
 }
