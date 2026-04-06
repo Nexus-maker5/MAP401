@@ -17,10 +17,8 @@ int main(int argc, char **argv){
     Tableau_Contours tab = recuperer_contours(A);
 
     printf("Image: %s\n", argv[1]);
-    //afficher_stats_contours(tab);
 
-    //afficher_contours(tab);
-
+    /* Déterminer le nom du fichier de sortie */
     char nom_sortie[512];
     strcpy(nom_sortie, argv[1]);
     char *point = strrchr(nom_sortie, '.'); 
@@ -28,8 +26,10 @@ int main(int argc, char **argv){
         *point = '\0';
     }
     strcat(nom_sortie, ".eps");
+
     sauvegarder_contours_eps(tab, nom_sortie, L, H);
     
+    /*Nettoyage*/
     liberer_tableau_contours(&tab);
 
     return 0;
