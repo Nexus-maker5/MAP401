@@ -268,7 +268,6 @@ Image negatif_image(Image I)
 			}
 		}
 	}	 
-  return I_neg;
-	
+  return I_neg; /*Image négative*/
 	
 }
