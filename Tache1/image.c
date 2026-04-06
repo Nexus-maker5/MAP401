@@ -227,7 +227,7 @@ Image lire_fichier_image(char *nom_f)
 	return I;
 }
 
-/* ecrire l'image I � l'ecran */
+/* ecrire l'image I à l'ecran */
 void ecrire_image(Image I)
 {
 	UINT i, j,L,H;
@@ -275,5 +275,5 @@ Image negatif_image(Image I)
 			}
 		}
 	}
-	return Ineg;
+	return Ineg;//image negatif de I
 }
