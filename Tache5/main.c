@@ -14,7 +14,7 @@ int main(int argc, char **argv){
     int L = largeur_image(A);
     int H = hauteur_image(A);
 
-    Tableau_Contours tab = recuperer_contours(A);
+    Liste_Contour tab = recuperer_contours(A);
 
     printf("Image: %s\n", argv[1]);
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     sauvegarder_contours_eps(tab, nom_sortie, L, H);
     
     /*Nettoyage*/
-    liberer_tableau_contours(&tab);
+    liberer_liste_contours(&tab);
 
     return 0;
 }

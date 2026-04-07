@@ -22,7 +22,7 @@ void avancer(robot *R){
         }
 }
 
-/*Faire tourner le robot à gauche*/
+/*Faire tourner le robot a gauche*/
 void tourner_a_gauche(robot *R) {
   switch (R->o) {
   case Nord:
@@ -40,7 +40,7 @@ void tourner_a_gauche(robot *R) {
   }
 }
 
-/*Faire tourner le robot à droite*/
+/*Faire tourner le robot a droite*/
 void tourner_a_droite(robot *R) {
   switch (R->o) {
   case Nord:
@@ -62,8 +62,8 @@ void tourner_a_droite(robot *R) {
 void nouvelle_orientation(Image I,robot *R){
     Pixel pD;
     Pixel pG;
-    double rx = R->x; // Position grille x
-    double ry = R->y; // Position grille y
+    double rx = R->x;
+    double ry = R->y;
     
     switch(R->o) {
         case Nord:
@@ -160,71 +160,49 @@ Contour calculer_contour(Image I,Image *I_masque, Point pixel){
     return C;
 }
 
-// --- Gestion du Tableau de Contours ---
+/* --- Gestion de la Liste de Contours --- */
 
-Tableau_Contours creer_tableau_contours_vide() {
-    Tableau_Contours T;
-    T.taille = 0;
-    T.capacite = 50; // Capacité initiale arbitraire
-    T.tab = malloc(T.capacite * sizeof(Contour));
-    if (T.tab == NULL) {
-        fprintf(stderr, "Erreur d'allocation initiale du tableau\n");
-        exit(1);
-    }
-    return T;
+Liste_Contour creer_liste_contours_vide() {
+    return creer_liste_Contour_vide();
 }
 
-void ajouter_contour(Tableau_Contours *T, Contour C) {
-    if (T->taille >= T->capacite) {
-        T->capacite *= 2;
-        T->tab = realloc(T->tab, T->capacite * sizeof(Contour));
-        if (T->tab == NULL) {
-            fprintf(stderr, "Erreur de réallocation mémoire\n");
-            exit(1);
-        }
-    }
-    T->tab[T->taille] = C;
-    T->taille++;
+void ajouter_contour(Liste_Contour *L, Contour C) {
+    *L = ajouter_element_liste_Contour(*L, C);
 }
 
-void liberer_tableau_contours(Tableau_Contours *T) {
-    for (unsigned int i = 0; i < T->taille; i++) {
-        supprimer_liste_Point(T->tab[i]);
-    }
-    free(T->tab);
-    T->tab = NULL;
-    T->taille = 0;
-    T->capacite = 0;
+void liberer_liste_contours(Liste_Contour *L) {
+    *L = supprimer_liste_Contour(*L);
 }
 
-// --- Fonctions Principales utilisant le Tableau ---
+/* --- Fonctions Principales utilisant la Liste --- */
 
-Tableau_Contours recuperer_contours(Image I) {
-    Tableau_Contours T = creer_tableau_contours_vide();
+Liste_Contour recuperer_contours(Image I) {
+    Liste_Contour L = creer_liste_contours_vide();
     Image I_masque = creer_image_masque(I);
     while (1) {
         Point depart = trouver_pixel_depart(I_masque);
         if (depart.x == -1 && depart.y == -1) break;
         Contour C = calculer_contour(I, &I_masque, depart);
-        ajouter_contour(&T, C);
+        ajouter_contour(&L, C);
     }
     supprimer_image(&I_masque);
-    return T;
+    return L;
 }
 
-void afficher_stats_contours(Tableau_Contours T) {
+void afficher_stats_contours(Liste_Contour L) {
     int total_segments = 0;
-    // Parcours simple avec une boucle for
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
+    Cellule_Liste_Contour *cel = L.first;
+    while (cel != NULL) {
+        Contour C = cel->data;
         if (C.taille > 0)
             total_segments += (C.taille - 1);
+        cel = cel->suiv;
     }
-    printf("Nombre de contours : %d\n", T.taille);
+    printf("Nombre de contours : %d\n", L.taille);
     printf("Nombre total de segments : %d\n", total_segments);
 }
 
-void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, int hauteur) {
+void sauvegarder_contours_eps(Liste_Contour L, char *filename, int largeur, int hauteur) {
     FILE *f = fopen(filename, "w");
     if (f == NULL) {
         fprintf(stderr, "Erreur ouverture fichier %s\n", filename);
@@ -236,8 +214,9 @@ void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, i
     fprintf(f, "0 setlinewidth\n");
     fprintf(f, "newpath\n");
     
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
+    Cellule_Liste_Contour *cel = L.first;
+    while (cel != NULL) {
+        Contour C = cel->data;
         if (C.first != NULL) {
             Cellule_Liste_Point *pt = C.first;
             fprintf(f, "%.2f %.2f moveto\n", pt->data.x, (double)hauteur - pt->data.y);
@@ -248,25 +227,32 @@ void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, i
             }
             fprintf(f, "closepath\n");
         }
+        cel = cel->suiv;
     }
     fprintf(f, "fill\n");
     fprintf(f, "showpage\n");
     fclose(f);
-    printf("Fichier EPS généré : %s\n", filename);
+    printf("Fichier EPS genere : %s\n", filename);
 }
 
-void afficher_contours(Tableau_Contours T) {
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
+void afficher_contours(Liste_Contour L) {
+    unsigned int i = 1;
+    Cellule_Liste_Contour *cel = L.first;
+    while (cel != NULL) {
+        Contour C = cel->data;
         Cellule_Liste_Point *courant = C.first;
-        printf("Contour %d: ", i + 1);
-        printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
-        courant = courant->suiv;
-        while (courant != NULL) {
-            Point p = courant->data;
-            printf("(%.1f, %.1f)", p.x, p.y);
+        printf("Contour %d: ", i);
+        if (courant != NULL) {
+            printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
             courant = courant->suiv;
+            while (courant != NULL) {
+                Point p = courant->data;
+                printf("(%.1f, %.1f)", p.x, p.y);
+                courant = courant->suiv;
+            }
         }
         printf("\n");
+        i++;
+        cel = cel->suiv;
     }
 }
