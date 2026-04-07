@@ -36,7 +36,7 @@ INCLUDEOPTS = -I$(INCDIR)
 COMPILOPTS = -g -Wall $(INCLUDEOPTS)
 
 # liste des executables
-EXECUTABLES = test_geom2d test_simplification
+EXECUTABLES = test_geom2d test_simplification test_simplification_copy
 
 
 #############################################################################
@@ -113,6 +113,12 @@ test_simplification.o : test_simplification.c simplification.h geom2d.h contour.
 	@echo "---------------------------------------------"
 	$(CC) -c $(COMPILOPTS) $<
 
+test_simplification_copy.o : test_simplification_copy.c simplification.h geom2d.h contour.h liste.h image.h
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Compilation du module test_simplification"
+	@echo "---------------------------------------------"
+	$(CC) -c $(COMPILOPTS) $<
 
 ########################################################
 # regles explicites de creation des executables
@@ -126,6 +132,13 @@ test_geom2d : test_geom2d.o geom2d.o
 	$(CC) $^ $(LDOPTS) -o $@
 
 test_simplification : test_simplification.o simplification.o geom2d.o contour.o liste.o image.o
+	@echo ""
+	@echo "---------------------------------------------"
+	@echo "Creation de l'executable "$@
+	@echo "---------------------------------------------"
+	$(CC) $^ $(LDOPTS) -o $@
+
+test_simplification_copy : test_simplification_copy.o simplification.o geom2d.o contour.o liste.o image.o
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Creation de l'executable "$@
