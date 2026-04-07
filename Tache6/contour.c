@@ -7,67 +7,41 @@
 /*Avancer le robot d'une case */
 void avancer(robot *R){
     switch(R->o){
-        case Nord:
-            R->y = R->y - 1;
-            break;
-        case Est:
-            R->x = R->x + 1;
-            break;
-        case Sud:
-            R->y = R->y + 1;
-            break;
-        case Ouest:
-            R->x = R->x - 1;
-            break;
-        }
+        case Nord: R->y = R->y - 1; break;
+        case Est:  R->x = R->x + 1; break;
+        case Sud:  R->y = R->y + 1; break;
+        case Ouest:R->x = R->x - 1; break;
+    }
 }
 
-/*Faire tourner le robot à gauche*/
+/*Faire tourner le robot a gauche*/
 void tourner_a_gauche(robot *R) {
-  switch (R->o) {
-  case Nord:
-    R->o = Ouest;
-    break;
-  case Est:
-    R->o = Nord;
-    break;
-  case Sud:
-    R->o = Est;
-    break;
-  case Ouest:
-    R->o = Sud;
-    break;
-  }
+    switch (R->o) {
+        case Nord:  R->o = Ouest; break;
+        case Est:   R->o = Nord;  break;
+        case Sud:   R->o = Est;   break;
+        case Ouest: R->o = Sud;   break;
+    }
 }
 
-/*Faire tourner le robot à droite*/
+/*Faire tourner le robot a droite*/
 void tourner_a_droite(robot *R) {
-  switch (R->o) {
-  case Nord:
-    R->o = Est;
-    break;
-  case Est:
-    R->o = Sud;
-    break;
-  case Sud:
-    R->o = Ouest;
-    break;
-  case Ouest:
-    R->o = Nord;
-    break;
-  }
+    switch (R->o) {
+        case Nord:  R->o = Est;   break;
+        case Est:   R->o = Sud;   break;
+        case Sud:   R->o = Ouest; break;
+        case Ouest: R->o = Nord;  break;
+    }
 }
 
 /*Mettre a jour l'orientation du robot */
-void nouvelle_orientation(Image I,robot *R){
-    Pixel pD;
-    Pixel pG;
-    double rx = R->x; // Position grille x
-    double ry = R->y; // Position grille y
-    
+void nouvelle_orientation(Image I, robot *R){
+    Pixel pD, pG;
+    double rx = R->x;
+    double ry = R->y;
     switch(R->o) {
         case Nord:
-            pG = get_pixel_image(I, rx, ry); 
+            pG = get_pixel_image(I, rx, ry);
             pD = get_pixel_image(I, rx + 1, ry);
             break;
         case Est:
@@ -83,199 +57,149 @@ void nouvelle_orientation(Image I,robot *R){
             pD = get_pixel_image(I, rx, ry);
             break;
     }
-
-    if(pG==NOIR) tourner_a_gauche(R);
-    else if(pD==BLANC) tourner_a_droite(R);
+    if(pG == NOIR) tourner_a_gauche(R);
+    else if(pD == BLANC) tourner_a_droite(R);
 }
 
-
-/*Trouver le pixel de depart (le premier pixel noir ayant un pixel blanc au dessus)*/
+/*Trouver le pixel de depart*/
 Point trouver_pixel_depart(Image I){
-    UINT i, j,L,H;
-	Pixel P1;
-	L=largeur_image(I);
-	H=hauteur_image(I);
-	for(j=1; j<=H; j++){
-		for(i=1; i<=L; i++){
-			P1=get_pixel_image(I,i,j);
-			if(P1==1){
-                Point pixel={i,j};
+    UINT i, j, L, H;
+    Pixel P1;
+    L = largeur_image(I);
+    H = hauteur_image(I);
+    for(j = 1; j <= H; j++){
+        for(i = 1; i <= L; i++){
+            P1 = get_pixel_image(I, i, j);
+            if(P1 == 1){
+                Point pixel = {i, j};
                 return pixel;
-            } 
-		}
-	}
-    return set_point(-1,-1);
+            }
+        }
+    }
+    return set_point(-1, -1);
 }
 
 /*Creer une image-masque*/
 Image creer_image_masque(Image I){
-    UINT L=largeur_image(I);
-    UINT H=hauteur_image(I);
-    Image I_masque= creer_image(L,H);
-    for (int j=1; j<H+1;j++){
-        for (int i=1;i<L+1;i++){
-            Pixel P1=get_pixel_image(I,i,j);
-            Pixel P2=get_pixel_image(I,i,j-1);
-            if (P1==NOIR && P2==BLANC){
-                set_pixel_image(I_masque,i,j,NOIR);
-            }
-            else{
-                set_pixel_image(I_masque,i,j,BLANC);
-            }
+    UINT L = largeur_image(I);
+    UINT H = hauteur_image(I);
+    Image I_masque = creer_image(L, H);
+    for(int j = 1; j < H+1; j++){
+        for(int i = 1; i < L+1; i++){
+            Pixel P1 = get_pixel_image(I, i, j);
+            Pixel P2 = get_pixel_image(I, i, j-1);
+            if(P1 == NOIR && P2 == BLANC)
+                set_pixel_image(I_masque, i, j, NOIR);
+            else
+                set_pixel_image(I_masque, i, j, BLANC);
         }
     }
     return I_masque;
 }
 
-
 /*Memoriser la position du robot*/
-void memoriser_position(Contour *C,robot *R){
-    *C = ajouter_element_liste_Point(*C, set_point(R->x,R->y));
+void memoriser_position(Contour *C, robot *R){
+    *C = ajouter_element_liste_Point(*C, set_point(R->x, R->y));
 }
 
 /*Calculer le contour de l'image*/
-Contour calculer_contour(Image I,Image *I_masque, Point pixel){
+Contour calculer_contour(Image I, Image *I_masque, Point pixel){
     robot R;
-    Contour C;
-    C=creer_liste_Point_vide();
-    double x0,y0;
-    int cond=1;
-    y0=pixel.y-1;
-    x0=pixel.x-1;
-    R.x=x0;
-    R.y=y0;
-    R.o=Est;
-    while (cond==1){
-        memoriser_position(&C,&R);
+    Contour C = creer_liste_Point_vide();
+    double x0 = pixel.x - 1;
+    double y0 = pixel.y - 1;
+    R.x = x0; R.y = y0; R.o = Est;
+    int cond = 1;
+    while(cond == 1){
+        memoriser_position(&C, &R);
         avancer(&R);
-        nouvelle_orientation(I,&R);
-        if(R.o==Est){
-            set_pixel_image(*I_masque,R.x+1,R.y+1,BLANC);
-        }
-        if(R.x==x0 && R.y==y0 && R.o==Est){
-            cond=0;
-        }
+        nouvelle_orientation(I, &R);
+        if(R.o == Est)
+            set_pixel_image(*I_masque, R.x+1, R.y+1, BLANC);
+        if(R.x == x0 && R.y == y0 && R.o == Est)
+            cond = 0;
     }
-    memoriser_position(&C,&R);
+    memoriser_position(&C, &R);
     return C;
 }
 
-// --- Gestion du Tableau de Contours ---
-
-Tableau_Contours creer_tableau_contours_vide() {
-    Tableau_Contours T;
-    T.taille = 0;
-    T.capacite = 50; // Capacité initiale arbitraire
-    T.tab = malloc(T.capacite * sizeof(Contour));
-    if (T.tab == NULL) {
-        fprintf(stderr, "Erreur d'allocation initiale du tableau\n");
-        exit(1);
-    }
-    return T;
-}
-
-void ajouter_contour(Tableau_Contours *T, Contour C) {
-    if (T->taille >= T->capacite) {
-        T->capacite *= 2;
-        T->tab = realloc(T->tab, T->capacite * sizeof(Contour));
-        if (T->tab == NULL) {
-            fprintf(stderr, "Erreur de réallocation mémoire\n");
-            exit(1);
-        }
-    }
-    T->tab[T->taille] = C;
-    T->taille++;
-}
-
-void liberer_tableau_contours(Tableau_Contours *T) {
-    for (unsigned int i = 0; i < T->taille; i++) {
-        supprimer_liste_Point(T->tab[i]);
-    }
-    free(T->tab);
-    T->tab = NULL;
-    T->taille = 0;
-    T->capacite = 0;
-}
-
-// --- Fonctions Principales utilisant le Tableau ---
-
-Tableau_Contours recuperer_contours(Image I) {
-    Tableau_Contours T = creer_tableau_contours_vide();
+/*Recuperer tous les contours de l'image*/
+Liste_Contour recuperer_contours(Image I) {
+    Liste_Contour L = creer_liste_Contour_vide();
     Image I_masque = creer_image_masque(I);
-    while (1) {
+    while(1) {
         Point depart = trouver_pixel_depart(I_masque);
-        if (depart.x == -1 && depart.y == -1) break;
+        if(depart.x == -1 && depart.y == -1) break;
         Contour C = calculer_contour(I, &I_masque, depart);
-        ajouter_contour(&T, C);
+        L = ajouter_element_liste_Contour(L, C);
     }
     supprimer_image(&I_masque);
-    compacter_tableau_contours(&T);
-    return T;
+    return L;
 }
 
-void afficher_stats_contours(Tableau_Contours T) {
+/*Afficher les statistiques des contours*/
+void afficher_stats_contours(Liste_Contour L) {
     int total_segments = 0;
-    // Parcours simple avec une boucle for
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
-        if (C.taille > 0)
-            total_segments += (C.taille - 1);
+    Cellule_Liste_Contour *cel = L.first;
+    while(cel != NULL) {
+        if(cel->data.taille > 0)
+            total_segments += (cel->data.taille - 1);
+        cel = cel->suiv;
     }
-    printf("Nombre de contours : %d\n", T.taille);
+    printf("Nombre de contours : %d\n", L.taille);
     printf("Nombre total de segments : %d\n", total_segments);
 }
 
-void compacter_tableau_contours(Tableau_Contours *T) {
-    if (T->taille == 0 || T->taille == T->capacite) return;
-    Contour *nouveau = realloc(T->tab, T->taille * sizeof(Contour));
-    if (nouveau == NULL) return; // échec non fatal, on garde l'ancien bloc
-    T->tab = nouveau;
-    T->capacite = T->taille;    // capacite == taille, info cohérente
-}
-
-void sauvegarder_contours_eps(Tableau_Contours T, char *filename, int largeur, int hauteur) {
+/*Sauvegarder les contours dans un fichier EPS*/
+void sauvegarder_contours_eps(Liste_Contour L, char *filename, int largeur, int hauteur) {
     FILE *f = fopen(filename, "w");
-    if (f == NULL) {
+    if(f == NULL) {
         fprintf(stderr, "Erreur ouverture fichier %s\n", filename);
         exit(1);
     }
-
     fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", largeur, hauteur);
     fprintf(f, "0 setlinewidth\n");
     fprintf(f, "newpath\n");
-    
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
-        if (C.first != NULL) {
+    Cellule_Liste_Contour *cel = L.first;
+    while(cel != NULL) {
+        Contour C = cel->data;
+        if(C.first != NULL) {
             Cellule_Liste_Point *pt = C.first;
             fprintf(f, "%.2f %.2f moveto\n", pt->data.x, (double)hauteur - pt->data.y);
             pt = pt->suiv;
-            while (pt != NULL) {
+            while(pt != NULL) {
                 fprintf(f, "%.2f %.2f lineto\n", pt->data.x, (double)hauteur - pt->data.y);
                 pt = pt->suiv;
             }
             fprintf(f, "closepath\n");
         }
+        cel = cel->suiv;
     }
     fprintf(f, "fill\n");
     fprintf(f, "showpage\n");
     fclose(f);
-    printf("Fichier EPS généré : %s\n", filename);
+    printf("Fichier EPS genere : %s\n", filename);
 }
 
-void afficher_contours(Tableau_Contours T) {
-    for (unsigned int i = 0; i < T.taille; i++) {
-        Contour C = T.tab[i];
+/*Afficher les contours*/
+void afficher_contours(Liste_Contour L) {
+    unsigned int i = 1;
+    Cellule_Liste_Contour *cel = L.first;
+    while(cel != NULL) {
+        Contour C = cel->data;
         Cellule_Liste_Point *courant = C.first;
-        printf("Contour %d: ", i + 1);
-        printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
-        courant = courant->suiv;
-        while (courant != NULL) {
-            Point p = courant->data;
-            printf("(%.1f, %.1f)", p.x, p.y);
+        printf("Contour %d: ", i);
+        if(courant != NULL) {
+            printf("(%.1f, %.1f),", courant->data.x, courant->data.y);
             courant = courant->suiv;
+            while(courant != NULL) {
+                printf("(%.1f, %.1f)", courant->data.x, courant->data.y);
+                courant = courant->suiv;
+            }
         }
         printf("\n");
+        i++;
+        cel = cel->suiv;
     }
 }

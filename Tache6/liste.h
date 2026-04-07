@@ -27,7 +27,7 @@ typedef struct Liste_Point_
 } Liste_Point;
 
 /*---- Type Contour (alias de Liste_Point) ----*/
-typedef Liste_Point Contour; 
+typedef Liste_Point Contour;
 
 /*---- Type Tableau de point ----*/
 typedef struct Tableau_Point_
@@ -36,45 +36,65 @@ typedef struct Tableau_Point_
     Point *tab;          /* (pointeur vers) le tableau des elements */
 } Tableau_Point;
 
+/*---- Type Cellule de liste de contour ----*/
+typedef struct Cellule_Liste_Contour_
+{
+    Contour data;                          /* donnee de l'element de liste */
+    struct Cellule_Liste_Contour_* suiv;   /* pointeur sur l'element suivant */
+} Cellule_Liste_Contour;
 
-/*---- Type Tableau de contour ----*/
-typedef struct Seq_Contour_
+/*---- Type Liste de contour ----*/
+typedef struct Liste_Contour_
 {
     unsigned int taille;            /* nombre d'elements dans la liste */
-    Contour *C; 
-} Seq_Contour;
+    Cellule_Liste_Contour *first;   /* pointeur sur le premier element de la liste */
+    Cellule_Liste_Contour *last;    /* pointeur sur le dernier element de la liste */
+} Liste_Contour;
 
 
 /*================================================================*/
 /* PROTOTYPES DE FONCTIONS                    */
 /*================================================================*/
 
-
-/* Crée une cellule de liste avec l'élément v.
-   Arrête le programme si l'allocation échoue. */
+/* Cree une cellule de liste avec l'element v.
+   Arrete le programme si l'allocation echoue. */
 Cellule_Liste_Point *creer_element_liste_Point(Point v);
 
-/* Crée une liste vide (taille 0, pointeurs NULL) */
+/* Cree une liste vide (taille 0, pointeurs NULL) */
 Liste_Point creer_liste_Point_vide();
 
-/* Ajoute l'élément e en fin de la liste L, renvoie la liste L modifiée */
+/* Ajoute l'element e en fin de la liste L, renvoie la liste L modifiee */
 Liste_Point ajouter_element_liste_Point(Liste_Point L, Point e);
 
-/* Supprime tous les éléments de la liste (libération mémoire), renvoie la liste vide */
+/* Supprime tous les elements de la liste (liberation memoire), renvoie la liste vide */
 Liste_Point supprimer_liste_Point(Liste_Point L);
 
-/* Concatène L2 à la suite de L1, renvoie la liste L1 modifiée */
+/* Concatene L2 a la suite de L1, renvoie la liste L1 modifiee */
 Liste_Point concatener_liste_Point(Liste_Point L1, Liste_Point L2);
 
-/* Supprime le premier élément de L si elle n'est pas vide.
-   Renvoie la liste (éventuellement) modifiée */
+/* Supprime le premier element de L si elle n'est pas vide.
+   Renvoie la liste (eventuellement) modifiee */
 Liste_Point supprimer_premier_element_liste_Point(Liste_Point L);
 
-/* Crée une séquence de points sous forme d'un tableau à partir de la liste L.
-   Arrête le programme si l'allocation échoue. */
+/* Cree une sequence de points sous forme d'un tableau a partir de la liste L.
+   Arrete le programme si l'allocation echoue. */
 Tableau_Point sequence_points_liste_vers_tableau(Liste_Point L);
 
-/* Affiche le contour L à l'écran (convertit en tableau puis affiche) */
+/* Affiche le contour L a l'ecran (convertit en tableau puis affiche) */
 void ecrire_contour(Liste_Point L);
+
+/* Cree une cellule de liste de contour avec l'element v.
+   Arrete le programme si l'allocation echoue. */
+Cellule_Liste_Contour *creer_element_liste_Contour(Contour v);
+
+/* Cree une liste de contours vide (taille 0, pointeurs NULL) */
+Liste_Contour creer_liste_Contour_vide();
+
+/* Ajoute le contour e en fin de la liste L, renvoie la liste L modifiee */
+Liste_Contour ajouter_element_liste_Contour(Liste_Contour L, Contour e);
+
+/* Supprime tous les elements de la liste de contours (liberation memoire des
+   contours et des cellules), renvoie la liste vide */
+void supprimer_liste_Contour(Liste_Contour L);
 
 #endif

@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     int L = largeur_image(A);
     int H = hauteur_image(A);
 
-    Tableau_Contours tab = recuperer_contours(A);
+    Liste_Contour tab = recuperer_contours(A);
 
     /* Déterminer le nom du fichier de sortie */
     char nom_sortie1[512];
@@ -36,18 +36,18 @@ int main(int argc, char **argv){
     printf("Image: %s\n", argv[1]);
     afficher_stats_contours(tab);
 
-    Tableau_Contours COUNT1= simplification_final(tab, 1);
+    Liste_Contour COUNT1= simplification_final(tab, 1);
     sauvegarder_contours_eps(COUNT1, nom_sortie1, L, H);
     afficher_stats_contours(COUNT1);
-    liberer_tableau_contours(&COUNT1);
+    supprimer_liste_Contour(COUNT1);
 
-    Tableau_Contours COUNT2= simplification_final(tab, 2);
+    Liste_Contour COUNT2= simplification_final(tab, 2);
     sauvegarder_contours_eps(COUNT2, nom_sortie2, L, H);
     afficher_stats_contours(COUNT2);
-    liberer_tableau_contours(&COUNT2);
+    supprimer_liste_Contour(COUNT2);
 
     
-    liberer_tableau_contours(&tab);
+    supprimer_liste_Contour(tab);
     supprimer_image(&A);
 
 }
