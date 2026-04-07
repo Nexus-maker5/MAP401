@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     sauvegarder_contours_eps(tab, nom_sortie, L, H);
     
     /*Nettoyage*/
-    liberer_liste_contours(&tab);
-
+    supprimer_liste_Contour(tab);
+    supprimer_image(&A);
     return 0;
 }

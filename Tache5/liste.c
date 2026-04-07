@@ -183,7 +183,7 @@ Liste_Contour ajouter_element_liste_Contour(Liste_Contour L, Contour e)
 
 /* supprimer tous les elements de la liste de contours (liberation memoire
    des points de chaque contour et des cellules), renvoie la liste vide */
-Liste_Contour supprimer_liste_Contour(Liste_Contour L)
+void supprimer_liste_Contour(Liste_Contour L)
 {
 	Cellule_Liste_Contour *el = L.first;
 	while (el)
@@ -195,5 +195,4 @@ Liste_Contour supprimer_liste_Contour(Liste_Contour L)
 	}
 	L.first = L.last = NULL;
 	L.taille = 0;
-	return L;
 }

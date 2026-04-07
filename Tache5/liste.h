@@ -95,6 +95,6 @@ Liste_Contour ajouter_element_liste_Contour(Liste_Contour L, Contour e);
 
 /* Supprime tous les elements de la liste de contours (liberation memoire des
    contours et des cellules), renvoie la liste vide */
-Liste_Contour supprimer_liste_Contour(Liste_Contour L);
+void supprimer_liste_Contour(Liste_Contour L);
 
 #endif
