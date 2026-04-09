@@ -89,33 +89,6 @@ Liste_Segment supprimer_premier_element_liste_Segment(Liste_Segment L)
 	return L;
 }
 
-/* creer un tableau de segments a partir de la liste L */
-Tableau_Segment sequence_segments_liste_vers_tableau(Liste_Segment L)
-{
-	Tableau_Segment T;
-	
-	T.taille = L.taille;
-	
-	T.tab = malloc(sizeof(Segment) * T.taille);
-	if (T.tab == NULL)
-	{
-		fprintf(stderr, "sequence_segments_liste_vers_tableau : ");
-		fprintf(stderr, " allocation impossible\n");
-		exit(-1);
-	}
-	
-	int k = 0;
-	Cellule_Liste_Segment *el = L.first;
-	while (el) 
-	{
-		T.tab[k] = el->data;
-		k++;
-		el = el->suiv;
-	}
-	
-	return T;
-}
-
 /*convertir une liste de segments en contour*/
 Contour liste_segment_vers_contour(Liste_Segment L){
 	Contour C=creer_liste_Point_vide();

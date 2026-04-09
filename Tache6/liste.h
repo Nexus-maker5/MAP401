@@ -52,6 +52,22 @@ typedef struct Liste_Contour_
 } Liste_Contour;
 
 
+/*---- Type segment ----*/
+typedef struct Cellule_Liste_Segment_
+{
+    Segment data;                        /* donnee de l'element de liste */
+    struct Cellule_Liste_Segment_* suiv; /* pointeur sur l'element suivant */
+} Cellule_Liste_Segment ;
+
+/*---- Type Liste de segment ----*/
+typedef struct Liste_Segment_
+{
+    unsigned int taille;            /* nombre d'elements dans la liste */
+    Cellule_Liste_Segment *first;     /* pointeur sur le premier element de la liste */
+    Cellule_Liste_Segment *last;      /* pointeur sur le dernier element de la liste */
+} Liste_Segment;
+
+
 /*================================================================*/
 /* PROTOTYPES DE FONCTIONS                    */
 /*================================================================*/
