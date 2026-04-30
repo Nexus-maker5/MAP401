@@ -36,6 +36,7 @@ int main(int argc, char **argv){
 
     Liste_Contour COUNT1= simplification_final(tab, d);
     sauvegarder_contours_eps(COUNT1, nom_sortie1, L, H);
+    afficher_stats_contours(COUNT1);
     supprimer_liste_Contour(COUNT1);
     
     supprimer_liste_Contour(tab);
